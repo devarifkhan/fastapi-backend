@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 from typing import Any
-from .schemas import Shipment, ShipmentStatus
+from .schemas import ShipmentCreate, ShipmentRead, ShipmentUpdate, ShipmentStatus
 
 
 
@@ -41,7 +41,7 @@ def get_shipment(id: int | None = None, shipment_status: ShipmentStatus | None =
 
 
 @app.post("/shipment")
-def submit_shipment(shipment: Shipment) -> dict[str, Any]:
+def submit_shipment(shipment: ShipmentCreate) -> dict[str, Any]:
 
     new_id = max(shipments.keys()) + 1
     shipments[new_id] = {
@@ -66,7 +66,7 @@ def get_shipment_field(field: str, id: int) -> dict[str, Any]:
 
 
 @app.put("/shipment")
-def shipment_update(id: int, shipment: Shipment) -> dict[str, Any]:
+def shipment_update(id: int, shipment: ShipmentRead) -> dict[str, Any]:
     shipments[id] = {
         "weight": shipment.weight,
         "content": shipment.content,
@@ -86,7 +86,7 @@ def update_shipment_status(id: int, shipment_status: ShipmentStatus) -> dict[str
 
 
 @app.patch("/shipment")
-def patch_shipment(id: int, shipment: Shipment) -> dict[str, Any]:
+def patch_shipment(id: int, shipment: ShipmentUpdate) -> dict[str, Any]:
     if id not in shipments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
