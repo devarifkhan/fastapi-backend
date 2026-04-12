@@ -45,8 +45,7 @@ def submit_shipment(shipment: ShipmentCreate) -> dict[str, Any]:
 
     new_id = max(shipments.keys()) + 1
     shipments[new_id] = {
-        "weight": shipment.weight,
-        "content": shipment.content,
+        **ShipmentCreate.model_dump(shipment),
         "status": "placed",
     }
     return {"id": new_id}
