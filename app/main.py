@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException,status
+from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 from typing import Any
 
@@ -19,9 +19,6 @@ shipments = {
 }
 
 
-
-
-
 @app.get("/shipment")
 def get_shipment(id: int | None = None) -> dict[str, Any]:
 
@@ -29,17 +26,26 @@ def get_shipment(id: int | None = None) -> dict[str, Any]:
         id = max(shipments.keys())
         return shipments[id]
 
-
     if not id in shipments:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found")   
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
     return shipments[id]
 
 
 @app.post("/shipment")
 def submit_shipment(content: str, weight: float) -> dict[str, int]:
+
+    if weight > 25:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Shipment weight exceeds the limit of 25 kg",
+        )
+
     new_id = max(shipments.keys()) + 1
     shipments[new_id] = {"weight": weight, "content": content, "status": "placed"}
     return {"id": new_id}
+
 
 @app.get("/scaler", include_in_schema=False)
 def get_scaler_docs():
