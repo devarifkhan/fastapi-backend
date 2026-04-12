@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from scalar_fastapi import get_scalar_api_reference
 
 app = FastAPI()
 
@@ -9,3 +10,10 @@ def get_shipment():
         "content": "wooden table",
         "status": "in transit",
     }
+
+@app.get("/scaler")
+def get_scaler_docs():
+    return get_scalar_api_reference(
+        openapi_url=app.openapi_url,
+        title="Scaler API",
+    )
