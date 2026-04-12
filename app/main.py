@@ -1,6 +1,12 @@
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 from typing import Any
+from pydantic import BaseModel
+
+class Shipment(BaseModel):
+    content: str
+    weight: float
+    destination: str
 
 app = FastAPI()
 
@@ -34,16 +40,16 @@ def get_shipment(id: int | None = None) -> dict[str, Any]:
 
 
 @app.post("/shipment")
-def submit_shipment(content:str,weight: float) -> dict[str, Any]:
+def submit_shipment(shipment: Shipment) -> dict[str, Any]:
 
-    if weight > 25:
+    if shipment.weight > 25:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Shipment weight exceeds the limit of 25 kg",
         )
 
     new_id = max(shipments.keys()) + 1
-    shipments[new_id] = {"weight": weight, "content": content, "status": "placed"}
+    shipments[new_id] = {"weight": shipment.weight, "content": shipment.content, "status": "placed"}
     return {"id": new_id}
 
 @app.get("/shipment/{field}")
@@ -60,23 +66,23 @@ def get_shipment_field(field: str, id: int) -> dict[str, Any]:
 
 
 @app.put("/shipment")
-def shipment_update(id: int,content:str,weight: float,status: str) -> dict[str, Any]:
-    shipments[id] = {"weight": weight, "content": content, "status": status}
+def shipment_update(id: int, shipment: Shipment) -> dict[str, Any]:
+    shipments[id] = {"weight": shipment.weight, "content": shipment.content, "status": shipment.status}
     return shipments[id]
     
 
 @app.patch("/shipment")
-def patch_shipment(id:int,content:str,weight:float, status:str) -> dict[str, Any]:
+def patch_shipment(id: int, shipment: Shipment) -> dict[str, Any]:
     if id not in shipments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
         )
-    if content is not None:
-        shipments[id]["content"] = content
-    if weight is not None:
-        shipments[id]["weight"] = weight
-    if status is not None:
-        shipments[id]["status"] = status
+    if shipment.content is not None:
+        shipments[id]["content"] = shipment.content
+    if shipment.weight is not None:
+        shipments[id]["weight"] = shipment.weight
+    if shipment.status is not None:
+        shipments[id]["status"] = shipment.status
     return shipments[id]
 
 
