@@ -27,6 +27,8 @@ def get_latest_shipment() -> dict[str, Any]:
 
 @app.get("/shipment/{id}")
 def get_shipment(id: int) -> dict[str, Any]:
+    if not id in shipments:
+        return {"error": "Given shipment ID does not exist."}
     return shipments[id]
 
 
