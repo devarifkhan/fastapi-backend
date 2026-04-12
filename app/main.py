@@ -36,9 +36,9 @@ def get_shipment(id: int | None = None) -> dict[str, Any]:
 
 
 @app.post("/shipment")
-def submit_shipment(shipment: dict[str, Any]) -> int:
+def submit_shipment(content: str, weight: float) -> int:
     new_id = max(shipments.keys()) + 1
-    shipments[new_id] = shipment
+    shipments[new_id] = {"weight": weight, "content": content, "status": "placed"}
     return new_id
 
 @app.get("/scaler", include_in_schema=False)
