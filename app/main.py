@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 from typing import Any
-from .schemas import Shipment
+from .schemas import Shipment, ShipmentStatus
 
 
 
@@ -24,13 +24,16 @@ shipments = {
 
 
 @app.get("/shipment")
-def get_shipment(id: int | None = None) -> dict[str, Any]:
+def get_shipment(id: int | None = None, shipment_status: ShipmentStatus | None = None) -> dict[str, Any]:
+
+    if shipment_status is not None:
+        return {k: v for k, v in shipments.items() if v["status"] == shipment_status}
 
     if id is None:
         id = max(shipments.keys())
         return shipments[id]
 
-    if not id in shipments:
+    if id not in shipments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
         )
@@ -69,6 +72,16 @@ def shipment_update(id: int, shipment: Shipment) -> dict[str, Any]:
         "content": shipment.content,
         "status": shipment.status,
     }
+    return shipments[id]
+
+
+@app.patch("/shipment/{id}/status")
+def update_shipment_status(id: int, shipment_status: ShipmentStatus) -> dict[str, Any]:
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
+    shipments[id]["status"] = shipment_status
     return shipments[id]
 
 
