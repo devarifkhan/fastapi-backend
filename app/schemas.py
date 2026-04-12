@@ -30,7 +30,7 @@ class ShipmentCreate(BaseShipment):
     weight: float = Field(le=25, ge=1)
     destination: int | None = Field(default_factory=random_destination) 
 
-class ShipmentUpdate(BaseShipment):
+class ShipmentUpdate(BaseModel):
     content: str | None = Field(default=None, max_length=30)
     weight: float | None = Field(default=None, le=25, ge=1)
     destination: int | None = Field(default=None)
