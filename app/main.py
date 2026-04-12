@@ -19,10 +19,7 @@ shipments = {
 }
 
 
-@app.get("/shipment/latest")
-def get_latest_shipment() -> dict[str, Any]:
-    id = max(shipments.keys())
-    return shipments[id]
+
 
 
 @app.get("/shipment")
@@ -37,6 +34,12 @@ def get_shipment(id: int | None = None) -> dict[str, Any]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found")   
     return shipments[id]
 
+
+@app.post("/shipment")
+def submit_shipment(shipment: dict[str, Any]) -> int:
+    new_id = max(shipments.keys()) + 1
+    shipments[new_id] = shipment
+    return new_id
 
 @app.get("/scaler", include_in_schema=False)
 def get_scaler_docs():
