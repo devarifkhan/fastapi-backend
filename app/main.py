@@ -79,6 +79,16 @@ def patch_shipment(id:int,content:str,weight:float, status:str) -> dict[str, Any
         shipments[id]["status"] = status
     return shipments[id]
 
+
+@app.delete("/shipment")
+def delete_shipment(id: int) -> dict[str, Any]:
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
+    del shipments[id]
+    return {"detail": "Shipment deleted successfully"}
+
 @app.get("/scaler", include_in_schema=False)
 def get_scaler_docs():
     return get_scalar_api_reference(
