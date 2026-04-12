@@ -87,7 +87,7 @@ def delete_shipment(id: int) -> dict[str, Any]:
             status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
         )
     del shipments[id]
-    return {"detail": "Shipment deleted successfully"}
+    return {"detail": f"Shipment with ID {id} deleted successfully"}
 
 @app.get("/scaler", include_in_schema=False)
 def get_scaler_docs():
