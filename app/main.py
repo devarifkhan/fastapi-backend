@@ -84,18 +84,10 @@ def update_shipment_status(id: int, shipment_status: ShipmentStatus) -> dict[str
     return shipments[id]
 
 
-@app.patch("/shipment")
-def patch_shipment(id: int, shipment: ShipmentUpdate) -> dict[str, Any]:
-    if id not in shipments:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
-        )
-    if shipment.content is not None:
-        shipments[id]["content"] = shipment.content
-    if shipment.weight is not None:
-        shipments[id]["weight"] = shipment.weight
-    if shipment.status is not None:
-        shipments[id]["status"] = shipment.status
+@app.patch("/shipment",response_model=ShipmentRead)
+def update_shipment(id: int, body: ShipmentUpdate) -> dict[str, Any]:
+    
+    shipments[id].update(body.model_dump(exclude_none=True))
     return shipments[id]
 
 
