@@ -46,6 +46,17 @@ def submit_shipment(content:str,weight: float) -> dict[str, Any]:
     shipments[new_id] = {"weight": weight, "content": content, "status": "placed"}
     return {"id": new_id}
 
+@app.get("/shipment/{field}")
+def get_shipment_field(field: str, id: int) -> dict[str, Any]:
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
+    if field not in shipments[id]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Field not found"
+        )
+    return {field: shipments[id][field]}
 
 @app.get("/scaler", include_in_schema=False)
 def get_scaler_docs():
