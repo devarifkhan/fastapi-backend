@@ -65,6 +65,19 @@ def shipment_update(id: int,content:str,weight: float,status: str) -> dict[str, 
     return shipments[id]
     
 
+@app.patch("/shipment")
+def patch_shipment(id:int,content:str,weight:float, status:str) -> dict[str, Any]:
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
+    if content is not None:
+        shipments[id]["content"] = content
+    if weight is not None:
+        shipments[id]["weight"] = weight
+    if status is not None:
+        shipments[id]["status"] = status
+    return shipments[id]
 
 @app.get("/scaler", include_in_schema=False)
 def get_scaler_docs():
