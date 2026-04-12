@@ -4,34 +4,30 @@ from typing import Any
 from .schemas import ShipmentCreate, ShipmentRead, ShipmentUpdate, ShipmentStatus
 
 
-
-
 app = FastAPI()
 
-shipments = {
-    12701: {"weight": 15.0, "content": "wooden chair", "status": "placed"},
-    12702: {"weight": 24.0, "content": "office desk", "status": "in transit"},
-    12703: {"weight": 8.2, "content": "floor lamp", "status": "delivered"},
-    12704: {"weight": 3.5, "content": "wall mirror", "status": "placed"},
-    12705: {"weight": 40.0, "content": "dining table", "status": "in transit"},
-    12706: {"weight": 12.7, "content": "bookshelf", "status": "delivered"},
-    12707: {"weight": 5.0, "content": "ceiling fan", "status": "placed"},
-    12708: {"weight": 18.3, "content": "coffee table", "status": "in transit"},
-    12709: {"weight": 2.1, "content": "table clock", "status": "delivered"},
-    12710: {"weight": 28.9, "content": "bed frame", "status": "placed"},
-    12711: {"weight": 9.4, "content": "office chair", "status": "in transit"},
+shipments: dict[int, dict] = {
+    12701: {"weight": 15.0, "content": "wooden chair", "status": "placed", "destination": 11201},
+    12702: {"weight": 24.0, "content": "office desk", "status": "in transit", "destination": 11345},
+    12703: {"weight": 8.2, "content": "floor lamp", "status": "delivered", "destination": 11567},
+    12704: {"weight": 3.5, "content": "wall mirror", "status": "placed", "destination": 11890},
+    12705: {"weight": 20.0, "content": "dining table", "status": "in transit", "destination": 11123},
+    12706: {"weight": 12.7, "content": "bookshelf", "status": "delivered", "destination": 11456},
+    12707: {"weight": 5.0, "content": "ceiling fan", "status": "placed", "destination": 11789},
+    12708: {"weight": 18.3, "content": "coffee table", "status": "in transit", "destination": 11234},
+    12709: {"weight": 2.1, "content": "table clock", "status": "delivered", "destination": 11678},
+    12710: {"weight": 24.9, "content": "bed frame", "status": "placed", "destination": 11901},
+    12711: {"weight": 9.4, "content": "office chair", "status": "in transit", "destination": 11543},
 }
 
 
 @app.get("/shipment")
-def get_shipment(id: int | None = None, shipment_status: ShipmentStatus | None = None) -> dict[str, Any]:
-
+def get_shipment(id: int | None = None, shipment_status: ShipmentStatus | None = None) -> Any:
     if shipment_status is not None:
         return {k: v for k, v in shipments.items() if v["status"] == shipment_status}
 
     if id is None:
         id = max(shipments.keys())
-        return shipments[id]
 
     if id not in shipments:
         raise HTTPException(
@@ -40,13 +36,12 @@ def get_shipment(id: int | None = None, shipment_status: ShipmentStatus | None =
     return shipments[id]
 
 
-@app.post("/shipment")
-def submit_shipment(shipment: ShipmentCreate) -> dict[str, Any]:
-
+@app.post("/shipment", status_code=status.HTTP_201_CREATED)
+def submit_shipment(shipment: ShipmentCreate) -> dict[str, int]:
     new_id = max(shipments.keys()) + 1
     shipments[new_id] = {
-        **ShipmentCreate.model_dump(shipment),
-        "status": "placed",
+        **shipment.model_dump(),
+        "status": ShipmentStatus.placed,
     }
     return {"id": new_id}
 
@@ -64,17 +59,17 @@ def get_shipment_field(field: str, id: int) -> dict[str, Any]:
     return {field: shipments[id][field]}
 
 
-@app.put("/shipment")
+@app.put("/shipment", response_model=ShipmentRead)
 def shipment_update(id: int, shipment: ShipmentRead) -> dict[str, Any]:
-    shipments[id] = {
-        "weight": shipment.weight,
-        "content": shipment.content,
-        "status": shipment.status,
-    }
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
+    shipments[id] = shipment.model_dump()
     return shipments[id]
 
 
-@app.patch("/shipment/{id}/status")
+@app.patch("/shipment/{id}/status", response_model=ShipmentRead)
 def update_shipment_status(id: int, shipment_status: ShipmentStatus) -> dict[str, Any]:
     if id not in shipments:
         raise HTTPException(
@@ -84,15 +79,18 @@ def update_shipment_status(id: int, shipment_status: ShipmentStatus) -> dict[str
     return shipments[id]
 
 
-@app.patch("/shipment",response_model=ShipmentRead)
+@app.patch("/shipment", response_model=ShipmentRead)
 def update_shipment(id: int, body: ShipmentUpdate) -> dict[str, Any]:
-    
+    if id not in shipments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+        )
     shipments[id].update(body.model_dump(exclude_none=True))
     return shipments[id]
 
 
 @app.delete("/shipment")
-def delete_shipment(id: int) -> dict[str, Any]:
+def delete_shipment(id: int) -> dict[str, str]:
     if id not in shipments:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
