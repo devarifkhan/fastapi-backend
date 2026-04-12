@@ -4,7 +4,7 @@ from typing import Any
 
 app = FastAPI()
 
-db ={
+shipments ={
     
     12701:[
         "weight: 15.0",
@@ -66,22 +66,13 @@ db ={
 
 @app.get("/shipment/latest")
 def get_latest_shipment() -> dict[str, Any]:
-    return {
-        "id": 123,
-        "content": "wooden chair",
-        "weight": 15.0,
-        "status": "placed",
-    }
+    id = max(shipments.keys())
+    return shipments[id]
 
 
 @app.get("/shipment/{id}")
 def get_shipment(id:int) -> dict[str, Any]:
-    return {
-        "id": id,
-        "content": "wooden table",
-        "weight": 20.5,
-        "status": "in transit",
-    }
+    return shipments[id]
 
 
 
