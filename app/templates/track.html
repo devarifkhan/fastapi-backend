@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Shipment</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .status { padding: 8px 16px; border-radius: 4px; display: inline-block; font-weight: bold; }
+        .event { border-left: 3px solid #ccc; padding: 8px 16px; margin: 8px 0; }
+    </style>
+</head>
+<body>
+    <h1>Shipment Tracking</h1>
+    <p><strong>Content:</strong> {{ content }}</p>
+    <p><strong>Destination:</strong> {{ destination }}</p>
+    <p><strong>Status:</strong> <span class="status">{{ status }}</span></p>
+    <p><strong>Estimated Delivery:</strong> {{ estimated_delivery }}</p>
+    <p><strong>Handled by:</strong> {{ partner }}</p>
+
+    <h2>Timeline</h2>
+    {% for event in timeline %}
+    <div class="event">
+        <strong>{{ event.status }}</strong> — {{ event.created_at }}<br>
+        {% if event.description %}<small>{{ event.description }}</small>{% endif %}
+    </div>
+    {% endfor %}
+</body>
+</html>

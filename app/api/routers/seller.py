@@ -1,10 +1,15 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/seller")
+from app.api.tag import APITag
+from app.api.schemas.seller import SellerCreate, SellerRead
+from ..dependencies import SellerServiceDep
 
-@app.post("/seller/signup")
-def register_seller(
+router = APIRouter(prefix="/seller", tags=[APITag.SELLER])
+
+
+@router.post("/signup", response_model=SellerRead)
+async def register_seller(
     seller: SellerCreate,
-    service: SellerServiceDep
+    service: SellerServiceDep,
 ):
-    service.add_seller(seller)
+    return await service.add_seller(seller)
