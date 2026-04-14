@@ -37,13 +37,15 @@ async def get_current_seller(
     x_seller_id: Annotated[UUID | None, Header()] = None,
 ):
     from app.database.models import Seller
+    from sqlmodel import select
 
     if x_seller_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="X-Seller-Id header is required",
         )
-    seller = await session.get(Seller, x_seller_id)
+    result = await session.execute(select(Seller).where(Seller.id == x_seller_id))
+    seller = result.scalar_one_or_none()
     if seller is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -61,13 +63,17 @@ async def get_current_partner(
     x_partner_id: Annotated[UUID | None, Header()] = None,
 ):
     from app.database.models import DeliveryPartner
+    from sqlmodel import select
 
     if x_partner_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="X-Partner-Id header is required",
         )
-    partner = await session.get(DeliveryPartner, x_partner_id)
+    result = await session.execute(
+        select(DeliveryPartner).where(DeliveryPartner.id == x_partner_id)
+    )
+    partner = result.scalar_one_or_none()
     if partner is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
