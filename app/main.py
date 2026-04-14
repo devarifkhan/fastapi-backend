@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 
 @asynccontextmanager
-def lifespan_handler(app: FastAPI):
+async def lifespan_handler(app: FastAPI):
     print("Connecting to the database...")
     yield
     print("Disconnecting from the database...")
