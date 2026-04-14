@@ -1,0 +1,13 @@
+{
+    "12701": {"weight": 15.0, "content": "wooden chair", "status": "placed", "destination": 11201},
+    "12702": {"weight": 24.0, "content": "office desk", "status": "in transit", "destination": 11345},
+    "12703": {"weight": 8.2, "content": "floor lamp", "status": "delivered", "destination": 11567},
+    "12704": {"weight": 3.5, "content": "wall mirror", "status": "placed", "destination": 11890},
+    "12705": {"weight": 20.0, "content": "dining table", "status": "in transit", "destination": 11123},
+    "12706": {"weight": 12.7, "content": "bookshelf", "status": "delivered", "destination": 11456},
+    "12707": {"weight": 5.0, "content": "ceiling fan", "status": "placed", "destination": 11789},
+    "12708": {"weight": 18.3, "content": "coffee table", "status": "in transit", "destination": 11234},
+    "12709": {"weight": 2.1, "content": "table clock", "status": "delivered", "destination": 11678},
+    "12710": {"weight": 24.9, "content": "bed frame", "status": "placed", "destination": 11901},
+    "12711": {"weight": 9.4, "content": "office chair", "status": "in transit", "destination": 11543}
+}
