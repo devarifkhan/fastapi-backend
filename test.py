@@ -1,10 +1,10 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from .database import Database
+from app.database import Database
 
 @asynccontextmanager
-def lifespan_handler(app: FastAPI):
+async def lifespan_handler(app: FastAPI):
     print("Connecting to the database...")
     yield
     print("Disconnecting from the database...")
