@@ -15,7 +15,17 @@ engine = create_async_engine(
 
 async def create_db_tables():
     async with engine.begin() as connection:
-        from app.database.models import Shipment  # noqa: F401
+        from app.database.models import (  # noqa: F401
+            DeliveryPartner,
+            Location,
+            Review,
+            Seller,
+            ServicableLocation,
+            Shipment,
+            ShipmentEvent,
+            ShipmentTag,
+            Tag,
+        )
         await connection.run_sync(SQLModel.metadata.create_all)
 
 
