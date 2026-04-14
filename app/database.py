@@ -5,8 +5,12 @@ shipments = {}
 with open("shipments.json", "r") as f:
     data = json.load(f)
 
-    for value in data:
-        shipments[value["id"]] = value
+    if isinstance(data, list):
+        for value in data:
+            shipments[value["id"]] = value
+    else:
+        for key, value in data.items():
+            shipments[int(key)] = {"id": int(key), **value}
 
 
 def save():
