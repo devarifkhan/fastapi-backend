@@ -1,5 +1,8 @@
+from typing import Annotated
+
+from fastapi import Depends
 from sqlmodel import SQLModel, Session, create_engine
-from .models import Shipment  # noqa: F401 — ensures table is registered
+from .models import Shipment
 
 engine = create_engine(
     url="sqlite:///sqlite.db",
@@ -8,9 +11,13 @@ engine = create_engine(
 )
 
 
-class Database:
-    def __init__(self):
-        SQLModel.metadata.create_all(bind=engine)
+def create_db_and_tables():
+ 
+    SQLModel.metadata.create_all(bind=engine) 
 
-    def get_session(self):
-        return Session(engine)
+
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+sessionDep = Annotated[Session, Depends(get_session)]

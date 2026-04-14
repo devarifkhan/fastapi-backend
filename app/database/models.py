@@ -15,7 +15,7 @@ class Shipment(SQLModel, table=True):
 
     __tablename__ = "shipment"
 
-    id: int = Field(primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     content: str
     weight: float = Field(le=25)
     destination: int

@@ -16,6 +16,7 @@ class BaseShipment(BaseModel):
 
 
 class ShipmentRead(BaseShipment):
+    id: int
     status: ShipmentStatus = ShipmentStatus.placed
 
 
