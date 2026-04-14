@@ -2,10 +2,19 @@ from fastapi import FastAPI, HTTPException, status
 from scalar_fastapi import get_scalar_api_reference
 from typing import Any
 from .schemas import ShipmentCreate, ShipmentRead, ShipmentUpdate, ShipmentStatus
-from .database import shipments, save
+from .database import Database
+from contextlib import asynccontextmanager
 
-app = FastAPI()
 
+@asynccontextmanager
+def lifespan_handler(app: FastAPI):
+    print("Connecting to the database...")
+    yield
+    print("Disconnecting from the database...")
+
+app = FastAPI(lifespan=lifespan_handler)
+
+db = Database()
 
 
 @app.get("/shipment")
